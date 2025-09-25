@@ -180,8 +180,8 @@ Este proyecto fue desarrollado como parte del curso de Machine Learning, aplican
 ## 📄 **Licencia**
 
 Proyecto académico - Uso educativo  
-© 2025 Hector Aguilar
+© 2025 Hector Aguila
 
 ---
 
-**🇨🇱 Hecho con talento tech chileno**
+**🇨🇱 Hecho con techlento**
