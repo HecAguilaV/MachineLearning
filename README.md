@@ -163,7 +163,7 @@ pip install pandas numpy matplotlib seaborn scikit-learn ipywidgets
 **Estudiante**: Hector Aguilar  
 **Curso**: Machine Learning - 4to Semestre  
 **Fecha**: Septiembre 2025  
-**Institución**: [Universidad]
+**Institución**: Duoc UC Puerto Montt
 
 ### 📞 **Contacto**
 - **GitHub**: [@HecAguilaV](https://github.com/HecAguilaV)
@@ -173,8 +173,7 @@ pip install pandas numpy matplotlib seaborn scikit-learn ipywidgets
 
 ## 🎉 **Reconocimientos**
 
-Este proyecto fue desarrollado como parte del curso de Machine Learning, aplicando técnicas de análisis de datos y modelado predictivo al mercado tecnológico chileno. Agradecimientos especiales por el apoyo técnico y la orientación académica recibida.
-
+Este proyecto fue desarrollado como parte del curso de Machine Learning, aplicando técnicas de análisis de datos y modelado predictivo al mercado tecnológico chileno.
 ---
 
 ## 📄 **Licencia**
