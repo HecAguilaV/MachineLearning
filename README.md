@@ -1,187 +1,341 @@
-# Análisis de Lenguajes de Programación
+## Análisis de Lenguajes de Programación
 
-[![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
+Proyecto Kedro para analizar la popularidad de lenguajes y su relación con salarios usando la Stack Overflow Developer Survey 2023. Enfoque simple, reproducible y honesto.
 
-## ¿Qué hace este proyecto?
+### Lo esencial
+- Dataset: Stack Overflow Developer Survey 2023 (CSV ~158 MB). Se trabaja con una muestra de ~1.000 filas para desarrollo.
+- Alcance: CRISP-DM (fases 1–3). Sin modelado ni despliegue.
+- Outputs clave:
+  - data/02_intermediate/survey_basic_stats.json (estadísticas básicas)
+  - data/02_intermediate/languages_analysis.parquet (popularidad de lenguajes)
+  - data/02_intermediate/salary_data.parquet (columnas salariales + país si existe)
+- Dónde ver el código:
+  - Pipeline: `src/analisis_lenguajes_programacion/pipelines/data_analysis/pipeline.py`
+  - Nodos: `src/analisis_lenguajes_programacion/pipelines/data_analysis/nodes.py`
+  - Notebook: `notebooks/01_exploratory_analysis.ipynb`
 
-Este proyecto analiza **qué lenguajes de programación son más populares y cuáles pagan mejor**. Es como hacer una investigación de mercado, pero con datos reales de más de 90,000 programadores que respondieron una encuesta en Stack Overflow (una página web muy famosa entre desarrolladores).
+## Pipeline (nodos)
+- load_and_inspect_survey(df): inspección y métricas básicas → survey_basic_stats.json
+- analyze_programming_languages(df): conteos/porcentajes por columnas de lenguajes → languages_analysis.parquet
+- extract_salary_data(df): columnas salariales y país (si aplica) → salary_data.parquet
 
-Usamos dos herramientas principales:
-- **CRISP-DM**: Una metodología (como una receta paso a paso) para hacer proyectos de análisis de datos
-- **Kedro**: Un programa que nos ayuda a organizar nuestro código y datos de forma ordenada
-
-### ¿Qué queremos lograr?
-
-- **Objetivo Principal**: Descubrir cuáles son los lenguajes de programación más usados hoy en día
-- **Objetivos Específicos**:
-  - Ver qué lenguajes están más de moda
-  - Descubrir qué lenguajes te pueden ayudar a ganar más dinero
-  - Crear información útil para decidir qué tecnologías aprender
-  - Hacer todo esto de manera organizada y que otros puedan repetir el proceso
-
-## Metodología CRISP-DM (La receta que seguimos)
-
-CRISP-DM es como una receta de cocina, pero para proyectos de datos. Tiene 6 pasos, pero nosotros hicimos los primeros 3:
-
-### 1. 🎯 Entender el Problema
-- **¿Qué queremos saber?**: ¿Qué lenguajes de programación son más populares y pagan mejor?
-- **¿Para qué nos sirve?**: Para ayudar a estudiantes y programadores a decidir qué aprender
-- **¿Cómo sabemos si lo hicimos bien?**: Si encontramos patrones claros y útiles
-
-### 2. 📊 Conocer los Datos
-- **¿De dónde vienen los datos?**: Encuesta de Stack Overflow 2023
-- **¿Cuántos datos tenemos?**: Más de 90,000 respuestas (usamos 1,000 para practicar)
-- **¿Qué información importante hay?**: Lenguajes que usa cada persona, cuánto gana, cuánta experiencia tiene
-
-### 3. 🔧 Preparar los Datos
-- Limpiar información que falta o está mal escrita
-- Organizar todo en el mismo formato
-- Crear nuevas variables que nos ayuden a entender mejor
-- Separar los datos en grupos más fáciles de analizar
-
-## Dataset Principal
-
-### Stack Overflow Developer Survey 2023
-- **Formato**: CSV (~158 MB)
-- **Registros**: Muestra de 1,000 respuestas para desarrollo
-- **Características principales**:
-  - 85 columnas con información completa del desarrollador
-  - 8 columnas específicas de lenguajes de programación
-  - 2 columnas relacionadas con información salarial
-  - Datos demográficos y de experiencia profesional
-
-## ¿Cómo funciona nuestro proyecto? (Los 3 pasos principales)
-
-Nuestro proyecto hace el trabajo en **3 pasos automáticos**:
-
-### 🔍 Paso 1: `inspect_survey_data` (Revisar los datos)
-- **¿Qué hace?**: Abre el archivo de datos y mira qué contiene
-- **¿Para qué sirve?**: Para saber con qué estamos trabajando (cuántas personas, qué preguntas, etc.)
-- **¿Qué produce?**: Un archivo con estadísticas básicas (`survey_basic_stats.json`)
-
-### 📈 Paso 2: `analyze_programming_languages` (Analizar lenguajes)
-- **¿Qué hace?**: Cuenta cuáles lenguajes son más populares
-- **¿Para qué sirve?**: Para ver qué tecnologías está usando más gente
-- **¿Qué produce?**: Un archivo con el análisis de lenguajes (`languages_analysis.parquet`)
-
-### 💰 Paso 3: `extract_salary_data` (Analizar salarios)
-- **¿Qué hace?**: Busca información sobre cuánto ganan los programadores
-- **¿Para qué sirve?**: Para ver qué lenguajes dan mejores salarios
-- **¿Qué produce?**: Un archivo con datos de salarios (`salary_data.parquet`)
-
-## Instalación y Configuración
-
-### Requisitos del Sistema
-- **Python**: 3.8 o superior
-- **Sistema operativo**: macOS, Linux, Windows
-- **Memoria RAM**: Mínimo 4GB (recomendado 8GB)
-
-### Configuración del Entorno
-
-1. **Crear entorno virtual**:
+## Cómo ejecutarlo
 ```bash
-python -m venv kedro-env
-source kedro-env/bin/activate  # macOS/Linux
-# kedro-env\Scripts\activate  # Windows
+# Ejecutar todo
+kedro run
+
+# Ejecutar un nodo
+kedro run --nodes="load_and_inspect_survey"
+
+# Visual del pipeline (luego abrir http://localhost:4141)
+kedro viz --no-browser --host=0.0.0.0 --port=4141
+
+# Notebooks con contexto
+kedro jupyter notebook
 ```
 
-2. **Instalar dependencias principales**:
+## Por qué un solo dataset
+- Basta para responder popularidad y salarios sin complejidad extra.
+- Más fácil de revisar y reproducir; menos puntos de fallo.
+- Menor consumo de memoria/tiempo: práctico para un primer entregable.
+
+## Limitaciones
+- Muestra de ~1.000 registros; no se procesa el CSV completo en memoria.
+- Visualizaciones y EDA básicos; CRISP-DM fases 4–6 fuera de alcance.
+
+## Proyecto
+- Autor: Héctor Aguila — Duoc UC, Machine Learning (4º semestre)
+- Repositorio: https://github.com/HecAguilaV/MachineLearning.git
+- Última actualización: 10 de octubre de 2025
+## Análisis de Lenguajes de Programación
+
+Proyecto Kedro para analizar la popularidad de lenguajes y su relación con salarios usando la Stack Overflow Developer Survey 2023. El enfoque es intencionalmente simple y reproducible.
+
+### Lo esencial
+- Dataset: Stack Overflow Developer Survey 2023 (CSV ~158 MB). Se trabaja con una muestra de ~1.000 filas para desarrollo.
+- Alcance: Fases 1–3 de CRISP-DM (Business Understanding, Data Understanding, Data Preparation). Sin modelado ni despliegue.
+- Entradas/Salidas clave:
+  - data/02_intermediate/survey_basic_stats.json (estadísticas básicas)
+  - data/02_intermediate/languages_analysis.parquet (popularidad de lenguajes)
+  - data/02_intermediate/salary_data.parquet (columnas salariales + país si existe)
+- Dónde revisar el código:
+  - Pipeline: `src/analisis_lenguajes_programacion/pipelines/data_analysis/pipeline.py`
+  - Nodos: `src/analisis_lenguajes_programacion/pipelines/data_analysis/nodes.py`
+  - Notebook: `notebooks/01_exploratory_analysis.ipynb`
+
+## Pipeline
+Nodos implementados (archivo `nodes.py`):
+- load_and_inspect_survey(df): inspección y métricas básicas → survey_basic_stats.json
+- analyze_programming_languages(df): columnas de lenguajes, conteos/porcentajes → languages_analysis.parquet
+- extract_salary_data(df): columnas salariales y país (si aplica) → salary_data.parquet
+
+## Cómo ejecutarlo
 ```bash
-pip install kedro==1.0.0 pandas numpy matplotlib seaborn pyarrow
+# Ejecutar todo el pipeline
+kedro run
+
+# Ejecutar un nodo específico
+kedro run --nodes="load_and_inspect_survey"
+
+# Visual del pipeline (abrir luego http://localhost:4141)
+kedro viz --no-browser --host=0.0.0.0 --port=4141
+
+# Notebooks con contexto Kedro
+kedro jupyter notebook
 ```
+
+## Por qué un solo dataset
+- Suficiente para responder popularidad y salarios sin agregar complejidad innecesaria.
+- Menos puntos de fallo; más fácil de revisar y reproducir.
+- Ahorro de memoria/tiempo, adecuado para un primer entregable honesto.
+
+## Limitaciones
+- Muestra de 1.000 registros para desarrollo; no se usa el dataset completo en memoria.
+- Visualizaciones y análisis exploratorio básicos; sin fases 4–6 de CRISP-DM.
+
+## Proyecto
+- Autor: Héctor Aguila — Duoc UC, Machine Learning (4º semestre)
+- Repositorio: https://github.com/HecAguilaV/MachineLearning.git
+- Última actualización: 10 de octubre de 2025
+
+## Análisis de Lenguajes de Programación
+
+Proyecto de análisis con Kedro que estudia popularidad de lenguajes y relación con salarios usando la encuesta Stack Overflow Developer Survey 2023. Se prioriza simplicidad y reproducibilidad: un solo dataset, tres nodos claros y comandos mínimos.
+
+### Por qué un solo dataset
+- Suficiente para responder preguntas del problema (lenguajes y salarios están en la misma fuente).
+- Reduce complejidad y errores; facilita reproducibilidad y corrección.
+- Consume menos memoria/tiempo y es más adecuado para un primer entregable.
+
+### Metodología (CRISP-DM, fases 1-3)
+1) Business Understanding: objetivos y métricas claras. 2) Data Understanding: exploración y validación básica. 3) Data Preparation: limpieza y estandarización necesarias para análisis.
+
+## Pipeline
+Nodos implementados en `src/analisis_lenguajes_programacion/pipelines/data_analysis/nodes.py`:
+- load_and_inspect_survey(df) → `data/02_intermediate/survey_basic_stats.json`
+- analyze_programming_languages(df) → `data/02_intermediate/languages_analysis.parquet`
+- extract_salary_data(df) → `data/02_intermediate/salary_data.parquet`
+
+## Uso rápido
+- Ejecutar todo: kedro run
+- Ejecutar por nodo: kedro run --nodes="load_and_inspect_survey" (o el nombre del nodo)
+- Notebooks con contexto: kedro jupyter notebook
+- Visual del pipeline: kedro viz --no-browser --host=0.0.0.0 --port=4141
+
+## Dataset
+- Stack Overflow Developer Survey 2023 (CSV ~158 MB). Para desarrollo se usó una muestra de 1,000 filas.
+- Contiene ~85 columnas con información sobre tecnologías, salarios y demografía.
+
+## Outputs
+- data/02_intermediate/survey_basic_stats.json: estadísticas básicas del dataset.
+- data/02_intermediate/languages_analysis.parquet: popularidad de lenguajes.
+- data/02_intermediate/salary_data.parquet: columnas salariales y país (si existe).
+
+## Limitaciones
+- Muestra de 1,000 registros para desarrollo; no incluye modelado ni despliegue (fases 4-6 CRISP-DM).
+- Visualizaciones mínimas en notebooks; se puede profundizar.
+
+## Proyecto
+- Autor: Héctor Aguila — Duoc UC, Machine Learning (4to semestre)
+- Repositorio: https://github.com/HecAguilaV/MachineLearning.git
+- Última actualización: 9 de octubre de 2025
+
+
+
+### Ejecución del Pipeline2. **Instalar dependencias principales**:
+
+```bash
+
+```bashpip install kedro==1.0.0 pandas numpy matplotlib seaborn pyarrow
+
+# Pipeline completo```
+
+kedro run
 
 3. **Verificar instalación**:
-```bash
-kedro --version
-python -c "import kedro; print(f'Kedro {kedro.__version__} instalado correctamente')"
-```
 
-## Cómo Ejecutar el Proyecto
+# Nodos específicos```bash
 
-### Pipeline Completo
+kedro run --nodes="inspect_survey_data"kedro --version
+
+kedro run --nodes="analyze_programming_languages"python -c "import kedro; print(f'Kedro {kedro.__version__} instalado correctamente')"
+
+kedro run --nodes="extract_salary_data"```
+
+
+
+# Pipeline específico## Cómo Ejecutar el Proyecto
+
+kedro run --pipeline="data_analysis"
+
+```### Pipeline Completo
+
 ```bash
-# Activar entorno virtual
+
+### Visualización# Activar entorno virtual
+
 source kedro-env/bin/activate
 
-# Navegar al directorio del proyecto
-cd analisis-lenguajes-programacion
+```bash
+
+# Abrir Kedro Viz# Navegar al directorio del proyecto
+
+kedro viz --no-browser --host=0.0.0.0 --port=4141cd analisis-lenguajes-programacion
+
+```
 
 # Ejecutar pipeline completo
-kedro run
+
+## Estructura del Proyectokedro run
+
 ```
 
-### Ejecución de Nodos Específicos
-```bash
-# Solo inspección de datos
-kedro run --nodes="inspect_survey_data"
-
-# Solo análisis de lenguajes
-kedro run --nodes="analyze_programming_languages"
-
-# Solo análisis salarial  
-kedro run --nodes="extract_salary_data"
-
-# Pipeline de análisis completo
-kedro run --pipeline="data_analysis"
 ```
 
-### Visualización del Pipeline
-```bash
-# Abrir interfaz web de Kedro Viz
+analisis-lenguajes-programacion/### Ejecución de Nodos Específicos
+
+├── conf/                    # Configuración```bash
+
+│   ├── base/# Solo inspección de datos
+
+│   │   ├── catalog.yml     # Catálogo de datoskedro run --nodes="inspect_survey_data"
+
+│   │   └── parameters.yml  # Parámetros
+
+│   └── local/              # Config local (git-ignored)# Solo análisis de lenguajes
+
+├── data/                   # Datos organizados por etapakedro run --nodes="analyze_programming_languages"
+
+│   ├── 01_raw/            # Datos sin procesar
+
+│   ├── 02_intermediate/   # Datos en procesamiento# Solo análisis salarial  
+
+│   └── ...                # Etapas adicionaleskedro run --nodes="extract_salary_data"
+
+├── deliverable/           # Entregable del proyecto
+
+├── notebooks/             # Jupyter notebooks# Pipeline de análisis completo
+
+├── src/                   # Código fuentekedro run --pipeline="data_analysis"
+
+│   └── analisis_lenguajes_programacion/```
+
+│       └── pipelines/
+
+│           └── data_analysis/### Visualización del Pipeline
+
+└── tests/                 # Tests unitarios```bash
+
+```# Abrir interfaz web de Kedro Viz
+
 kedro viz --no-browser --host=0.0.0.0 --port=4141
-```
 
-## Estructura del Proyecto
+## Outputs del Análisis```
 
-```
-analisis-lenguajes-programacion/
-├── 📁 conf/                          # Archivos de configuración
+
+
+### survey_basic_stats.json## Estructura del Proyecto
+
+Estadísticas descriptivas del dataset:
+
+- Dimensiones y tipos de datos```
+
+- Valores faltantesanalisis-lenguajes-programacion/
+
+- Distribuciones básicas├── 📁 conf/                          # Archivos de configuración
+
 │   ├── base/
-│   │   ├── catalog.yml              # Configuración del catálogo de datos
-│   │   ├── logging.yml              # Configuración de logging
-│   │   └── parameters.yml           # Parámetros del proyecto
-│   └── local/                       # Configuraciones locales (git-ignored)
-├── 📁 data/                         # Datos del proyecto (organizados por kedro)
+
+### languages_analysis.parquet│   │   ├── catalog.yml              # Configuración del catálogo de datos
+
+Análisis de lenguajes:│   │   ├── logging.yml              # Configuración de logging
+
+- Popularidad relativa│   │   └── parameters.yml           # Parámetros del proyecto
+
+- Distribución por experiencia│   └── local/                       # Configuraciones locales (git-ignored)
+
+- Tendencias de adopción├── 📁 data/                         # Datos del proyecto (organizados por kedro)
+
 │   ├── 01_raw/                     # 📥 Datos crudos (Stack Overflow CSV)
-│   ├── 02_intermediate/            # 🔄 Datos en procesamiento
-│   ├── 03_primary/                 # ✅ Datos limpios y validados
-│   ├── 04_feature/                 # 🎯 Features engineered (outputs actuales)
-│   ├── 05_model_input/             # 📊 Input preparado para modelos
-│   ├── 06_models/                  # 🤖 Modelos entrenados
+
+### salary_data.parquet│   ├── 02_intermediate/            # 🔄 Datos en procesamiento
+
+Datos de compensación:│   ├── 03_primary/                 # ✅ Datos limpios y validados
+
+- Rangos salariales por tecnología│   ├── 04_feature/                 # 🎯 Features engineered (outputs actuales)
+
+- Correlaciones lenguaje-remuneración│   ├── 05_model_input/             # 📊 Input preparado para modelos
+
+- Análisis de factores determinantes│   ├── 06_models/                  # 🤖 Modelos entrenados
+
 │   ├── 07_model_output/            # 📈 Predicciones y resultados
-│   └── 08_reporting/               # 📋 Datos para reportes y dashboards
+
+## Stack Tecnológico│   └── 08_reporting/               # 📋 Datos para reportes y dashboards
+
 ├── 📁 notebooks/                    # 📓 Jupyter notebooks para análisis interactivo
-├── 📁 src/analisis_lenguajes_programacion/
-│   ├── pipelines/
-│   │   └── data_analysis/          # 🔧 Pipeline principal de análisis
-│   │       ├── __init__.py
-│   │       ├── nodes.py            # Funciones de procesamiento
+
+- **Kedro 1.0.0**: Framework de pipeline├── 📁 src/analisis_lenguajes_programacion/
+
+- **Pandas**: Procesamiento de datos│   ├── pipelines/
+
+- **NumPy**: Operaciones numéricas│   │   └── data_analysis/          # 🔧 Pipeline principal de análisis
+
+- **Matplotlib/Seaborn**: Visualización│   │       ├── __init__.py
+
+- **PyArrow**: Almacenamiento eficiente│   │       ├── nodes.py            # Funciones de procesamiento
+
 │   │       └── pipeline.py         # Definición del pipeline
-│   └── settings.py                  # Configuraciones del proyecto
+
+## Trabajo con Notebooks│   └── settings.py                  # Configuraciones del proyecto
+
 ├── 📁 tests/                       # 🧪 Tests unitarios
-├── requirements.txt                 # 📦 Dependencias de Python
-└── README.md                       # 📖 Este archivo
-```
 
-## Resultados y Outputs
+```bash├── requirements.txt                 # 📦 Dependencias de Python
 
-### Estadísticas Generales del Dataset
+# Iniciar Jupyter con contexto Kedro└── README.md                       # 📖 Este archivo
+
+kedro jupyter notebook```
+
+
+
+# Acceso a catálogo y pipelines## Resultados y Outputs
+
+# Variables disponibles: catalog, context, pipelines, session
+
+```### Estadísticas Generales del Dataset
+
 - **Total de registros procesados**: 1,000 (muestra de desarrollo)
-- **Columnas analizadas**: 85 variables completas
+
+## Información del Proyecto- **Columnas analizadas**: 85 variables completas
+
 - **Lenguajes identificados**: 8 columnas específicas de tecnologías
-- **Variables salariales**: 2 columnas de compensación
 
-### Archivos de Salida
+- **Autor**: Héctor Aguila- **Variables salariales**: 2 columnas de compensación
 
-#### 📊 `survey_basic_stats.json`
+- **Institución**: Duoc UC - Puerto Montt
+
+- **Curso**: Machine Learning - 4to Semestre### Archivos de Salida
+
+- **Fecha**: Septiembre 2025
+
+- **Propósito**: Evaluación académica#### 📊 `survey_basic_stats.json`
+
 Estadísticas descriptivas básicas del dataset:
-- Número de registros y columnas
+
+## Contacto- Número de registros y columnas
+
 - Tipos de datos identificados
-- Porcentaje de valores faltantes
+
+- **Repositorio**: https://github.com/HecAguilaV/MachineLearning.git- Porcentaje de valores faltantes
+
 - Resumen de variables numéricas y categóricas
 
+---
+
 #### 📈 `languages_analysis.parquet`
-Análisis detallado de lenguajes de programación:
+
+**Última actualización**: 9 de octubre de 2025Análisis detallado de lenguajes de programación:
+
 - Popularidad relativa de cada lenguaje
 - Distribución de uso por experiencia
 - Trends de adopción identificados
@@ -274,7 +428,7 @@ tipo(alcance): descripción breve
 - fix: corrección de bugs
 - docs: cambios en documentación
 - style: cambios de formato (no afectan funcionalidad)
-- refactor: refactorización de código
+- refactor: factorización de código
 - test: agregar o modificar tests
 ```
 
@@ -297,74 +451,3 @@ Para preguntas, sugerencias o reportes de problemas:
 - **Documentación**: Ver archivos en `/docs` (si existen)
 
 ---
-
-## 📚 Glosario (Diccionario de Términos)
-
-*Si encuentras una palabra que no entiendes, búscala aquí:*
-
-### Términos de Programación
-- **Pipeline**: Es como una cadena de montaje en una fábrica. Los datos entran por un lado, pasan por varios procesos, y salen transformados por el otro lado
-- **Dataset**: Un conjunto de datos, como una hoja de Excel gigante con mucha información
-- **CSV**: Un tipo de archivo que guarda datos en filas y columnas, como Excel pero más simple
-- **Parquet**: Otro tipo de archivo para guardar datos, pero más eficiente que CSV
-- **JSON**: Un formato para guardar información de manera organizada, fácil de leer por computadoras
-
-### Términos de Kedro
-- **Nodo**: Una función que hace una tarea específica (como limpiar datos o hacer cálculos)
-- **Catálogo**: Una lista de todos los archivos de datos que usa el proyecto
-- **Pipeline**: La secuencia completa de pasos que sigue el proyecto
-- **Kedro Viz**: Una herramienta que muestra gráficamente cómo está conectado todo el proyecto
-
-### Términos de Análisis de Datos
-- **CRISP-DM**: Una metodología (receta) estándar para hacer proyectos de análisis de datos
-- **EDA (Análisis Exploratorio)**: El proceso de explorar los datos para entender qué contienen
-- **Feature Engineering**: Crear nuevas variables a partir de las que ya tenemos
-- **Insights**: Descubrimientos o conclusiones interesantes que sacamos de los datos
-
-### Términos Técnicos
-- **Entorno Virtual**: Un espacio aislado donde instalamos las herramientas del proyecto, sin afectar el resto de la computadora
-- **Framework**: Un conjunto de herramientas pre-hechas que nos facilita el trabajo
-- **API**: Una forma de que diferentes programas se comuniquen entre sí
-- **Git**: Una herramienta para llevar control de cambios en el código
-
-### Términos de Machine Learning
-- **Correlación**: Cuando dos cosas están relacionadas (por ejemplo: más experiencia = mejor salario)
-- **Modelado Predictivo**: Usar datos del pasado para predecir qué pasará en el futuro
-- **Variables**: Las características que medimos (edad, salario, lenguajes que conoce, etc.)
-- **MLOps**: Prácticas para mantener modelos de machine learning funcionando en producción
-
-### Términos de la Industria
-- **Stack Overflow**: La página web más famosa donde programadores hacen preguntas y comparten conocimiento
-- **Open Source**: Software gratuito que cualquiera puede usar y modificar
-- **CI/CD**: Prácticas para automatizar el proceso de desarrollo y despliegue de software
-
----
-
-## Estado del Proyecto
-
-🟢 **Activo** - En desarrollo y mejora continua
-
-**Última actualización**: 24 de septiembre de 2025
-
-**Próximo paso**: Completar notebooks con análisis básico y visualizaciones
-
----
-
-## 💡 Consejos para Estudiantes
-
-### Si eres nuevo en esto:
-1. **No te preocupes si no entiendes todo** - Esto es normal al comenzar
-2. **Ejecuta el código paso a paso** - No trates de hacer todo de una vez
-3. **Lee los mensajes de error** - Aunque parezcan confusos, te dan pistas
-4. **Busca en Google** - Los programadores hacemos esto TODO el tiempo
-5. **Pide ayuda** - La comunidad de programadores suele ser muy útil
-
-### Para tu evaluación:
-- **Documenta todo lo que hagas** - Explica por qué hiciste cada cosa
-- **Haz capturas de pantalla** - Los profesores aman las evidencias visuales
-- **Explica con tus propias palabras** - Demuestra que entendiste, no solo copiaste
-- **Menciona las dificultades** - Es normal tener problemas, compártelos
-
----
-
-*Este README es un documento que se actualiza conforme aprendemos y mejoramos el proyecto.*

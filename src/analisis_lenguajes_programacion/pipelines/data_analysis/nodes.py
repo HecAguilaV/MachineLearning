@@ -1,193 +1,147 @@
 """
-Análisis Básico de Datos de Stack Overflow
-Proyecto para principiantes - Análisis de Lenguajes de Programación
+Nodos de análisis de datos para el pipeline
 """
 
 import pandas as pd
 import logging
 from typing import Dict, Any
 
-# Configuramos el logger para ver qué está pasando
 logger = logging.getLogger(__name__)
 
 
 def load_and_inspect_survey(survey_data: pd.DataFrame) -> Dict[str, Any]:
     """
-    PASO 1: Revisar qué datos tenemos
-    Esta función es como abrir una caja y contar qué hay adentro
-    
-    ¿Qué hace?
-    - Cuenta cuántas filas (personas) y columnas (preguntas) tenemos
-    - Ve cuántos datos faltan
-    - Calcula cuánto espacio ocupa en la computadora
+    Inspecciona el dataset y genera estadísticas básicas.
     
     Args:
-        survey_data: Los datos de la encuesta (como una tabla de Excel gigante)
+        survey_data: DataFrame con los datos de la encuesta
         
     Returns:
-        Un diccionario con información básica sobre nuestros datos
+        Diccionario con estadísticas del dataset
     """
-    print("📊 Revisando nuestros datos...")
-    print(f"   Tamaño: {survey_data.shape[0]} personas, {survey_data.shape[1]} preguntas")
+    print("Inspeccionando datos...")
+    print(f"Tamaño: {survey_data.shape[0]} filas, {survey_data.shape[1]} columnas")
     
-    # Contamos cuántas personas respondieron
-    total_personas = len(survey_data)
+    total_filas = len(survey_data)
+    total_columnas = len(survey_data.columns)
     
-    # Contamos cuántas preguntas hay
-    total_preguntas = len(survey_data.columns)
+    valores_nulos = survey_data.isnull().sum().sum()
+    total_valores = total_filas * total_columnas
+    porcentaje_nulos = (valores_nulos / total_valores) * 100
     
-    # Calculamos cuántos espacios están vacíos
-    espacios_vacios = survey_data.isnull().sum().sum()
-    total_espacios = total_personas * total_preguntas
-    porcentaje_vacios = (espacios_vacios / total_espacios) * 100
-    
-    # Organizamos toda esta información
     resumen = {
-        'total_personas': int(total_personas),
-        'total_preguntas': int(total_preguntas), 
-        'espacios_vacios': int(espacios_vacios),
-        'porcentaje_vacios': round(float(porcentaje_vacios), 2),
-        'mensaje': f"Tenemos datos de {total_personas} programadores con {total_preguntas} preguntas cada uno"
+        'total_filas': int(total_filas),
+        'total_columnas': int(total_columnas), 
+        'valores_nulos': int(valores_nulos),
+        'porcentaje_nulos': round(float(porcentaje_nulos), 2),
+        'mensaje': f"Dataset con {total_filas} registros y {total_columnas} columnas"
     }
     
-    print(f"✅ Resumen: {resumen['mensaje']}")
-    print(f"   Datos faltantes: {resumen['porcentaje_vacios']}%")
+    print(f"Resumen: {resumen['mensaje']}")
+    print(f"Datos faltantes: {resumen['porcentaje_nulos']}%")
     
     return resumen
 
 
 def analyze_programming_languages(survey_data: pd.DataFrame) -> pd.DataFrame:
     """
-    PASO 2: Buscar información sobre lenguajes de programación
-    Esta función es como un detective que busca pistas sobre qué lenguajes usa la gente
-    
-    ¿Qué hace?
-    - Busca columnas que hablen de lenguajes (Python, Java, etc.)
-    - Cuenta cuántas personas respondieron cada pregunta
-    - Ve cuántos lenguajes diferentes mencionaron
+    Analiza columnas relacionadas con lenguajes de programación.
     
     Args:
-        survey_data: Los datos de la encuesta
+        survey_data: DataFrame con los datos de la encuesta
         
     Returns:
-        Una tabla con el análisis de lenguajes de programación
+        DataFrame con análisis de columnas de lenguajes
     """
-    print("🔍 Buscando información sobre lenguajes de programación...")
+    print("Analizando lenguajes de programación...")
     
-    # Buscar columnas que hablen de lenguajes o tecnologías
-    # Es como buscar palabras clave en un diccionario
+    # Buscar columnas relacionadas con lenguajes
     columnas_lenguajes = []
     
-    for nombre_columna in survey_data.columns:
-        nombre_minuscula = nombre_columna.lower()
-        if 'language' in nombre_minuscula or 'tech' in nombre_minuscula:
-            columnas_lenguajes.append(nombre_columna)
+    for col in survey_data.columns:
+        col_lower = col.lower()
+        if 'language' in col_lower or 'tech' in col_lower:
+            columnas_lenguajes.append(col)
     
-    print(f"   Encontré {len(columnas_lenguajes)} columnas sobre lenguajes:")
-    for i, col in enumerate(columnas_lenguajes, 1):
-        print(f"   {i}. {col}")
+    print(f"Encontradas {len(columnas_lenguajes)} columnas de lenguajes")
     
-    # Si no encontramos nada, usemos las primeras 8 columnas como ejemplo
+    # Si no hay columnas específicas, usar las primeras 8
     if len(columnas_lenguajes) == 0:
-        print("   No encontré columnas específicas, usando las primeras 8 como ejemplo")
+        print("No se encontraron columnas específicas, usando primeras 8")
         columnas_lenguajes = list(survey_data.columns[:8])
     
-    # Crear un análisis simple de cada columna
+    # Analizar cada columna
     resultados = []
     
-    for columna in columnas_lenguajes:
-        # Contar cuántas respuestas válidas hay
-        respuestas_validas = survey_data[columna].count()
-        
-        # Contar cuántos valores únicos hay
-        valores_unicos = survey_data[columna].nunique()
-        
-        # Calcular el porcentaje de respuestas
-        porcentaje_respuestas = (respuestas_validas / len(survey_data)) * 100
+    for col in columnas_lenguajes:
+        respuestas_validas = survey_data[col].count()
+        valores_unicos = survey_data[col].nunique()
+        porcentaje = (respuestas_validas / len(survey_data)) * 100
         
         resultados.append({
-            'columna': columna,
+            'columna': col,
             'respuestas_validas': respuestas_validas,
             'valores_unicos': valores_unicos,
-            'porcentaje_respuestas': round(porcentaje_respuestas, 1)
+            'porcentaje_respuestas': round(porcentaje, 1)
         })
     
-    # Convertir a DataFrame (tabla ordenada)
-    tabla_analisis = pd.DataFrame(resultados)
+    df_resultado = pd.DataFrame(resultados)
     
-    print("✅ Análisis completado!")
-    print(f"   Analicé {len(tabla_analisis)} columnas de lenguajes")
+    print(f"Análisis completado: {len(df_resultado)} columnas procesadas")
     
-    return tabla_analisis
+    return df_resultado
 
 
 def extract_salary_data(survey_data: pd.DataFrame) -> pd.DataFrame:
     """
-    PASO 3: Buscar información sobre salarios
-    Esta función es como buscar información sobre cuánto ganan los programadores
-    
-    ¿Qué hace?
-    - Busca columnas que hablen de salarios o dinero
-    - Extrae esa información para analizarla después
-    - También incluye el país (si lo encuentra) porque los salarios cambian por país
+    Extrae información sobre salarios del dataset.
     
     Args:
-        survey_data: Los datos de la encuesta
+        survey_data: DataFrame con los datos de la encuesta
         
     Returns:
-        Una tabla con solo la información de salarios
+        DataFrame con datos de salarios
     """
-    print("💰 Buscando información sobre salarios...")
+    print("Extrayendo información de salarios...")
     
-    # Buscar columnas que hablen de salarios, dinero, compensación
-    # Palabras clave que podrían indicar salario
-    palabras_salario = ['salary', 'comp', 'income', 'pay', 'wage']
+    # Buscar columnas relacionadas con salarios
+    palabras_clave = ['salary', 'comp', 'income', 'pay', 'wage']
     columnas_salario = []
     
-    for nombre_columna in survey_data.columns:
-        nombre_minuscula = nombre_columna.lower()
-        for palabra in palabras_salario:
-            if palabra in nombre_minuscula:
-                columnas_salario.append(nombre_columna)
-                break  # No agregar la misma columna dos veces
+    for col in survey_data.columns:
+        col_lower = col.lower()
+        for palabra in palabras_clave:
+            if palabra in col_lower:
+                columnas_salario.append(col)
+                break
     
-    print(f"   Encontré {len(columnas_salario)} columnas sobre salarios:")
-    for i, col in enumerate(columnas_salario, 1):
-        print(f"   {i}. {col}")
+    print(f"Encontradas {len(columnas_salario)} columnas de salarios")
     
-    # Si no encontramos columnas de salario, crear un análisis básico
+    # Si no hay columnas de salario, crear análisis básico
     if len(columnas_salario) == 0:
-        print("   No encontré columnas específicas de salario")
-        print("   Creando análisis básico con información general...")
+        print("No se encontraron columnas de salario, creando análisis básico")
         
-        # Crear un DataFrame simple con información básica
         datos_basicos = pd.DataFrame({
-            'analisis': ['total_respuestas', 'columnas_disponibles', 'paises_mencionados'],
+            'analisis': ['total_respuestas', 'columnas_disponibles', 'valores_unicos'],
             'valor': [
                 len(survey_data),
                 len(survey_data.columns),
-                survey_data.get('Country', survey_data.iloc[:, 0]).nunique() if len(survey_data.columns) > 0 else 0
+                survey_data.iloc[:, 0].nunique() if len(survey_data.columns) > 0 else 0
             ]
         })
         
         return datos_basicos
     
-    # Si encontramos columnas de salario, extraerlas
-    columnas_a_extraer = columnas_salario.copy()
+    # Extraer columnas de salario
+    columnas_extraer = columnas_salario.copy()
     
     # Agregar país si existe
     if 'Country' in survey_data.columns:
-        columnas_a_extraer.append('Country')
-        print("   ✅ También incluiré información del país")
+        columnas_extraer.append('Country')
+        print("Incluyendo columna de país")
     
-    # Extraer solo las columnas que nos interesan
-    datos_salario = survey_data[columnas_a_extraer].copy()
+    datos_salario = survey_data[columnas_extraer].copy()
     
-    # Contar cuántos datos válidos tenemos
-    datos_validos = datos_salario.count().sum()
-    
-    print("✅ Extracción completada!")
-    print(f"   Extraje {len(datos_salario)} filas con {len(columnas_a_extraer)} columnas")
-    print(f"   Total de datos válidos: {datos_validos}")
+    print(f"Extracción completada: {len(datos_salario)} filas, {len(columnas_extraer)} columnas")
     
     return datos_salario
