@@ -7,7 +7,7 @@ Cobertura mínima para validar:
 
 import pandas as pd
 from kedro.pipeline import node, Pipeline
-from analisis_lenguajes_programacion.pipelines.data_analysis.nodes import (
+from ML_Analisis_Ecosistema_Dev.pipelines.data_analysis.nodes import (
 	load_and_inspect_survey,
 	analyze_programming_languages,
 	extract_salary_data,

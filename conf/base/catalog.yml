@@ -2,19 +2,21 @@
 
 # --- Stack Overflow 2023 ---
 datos_crudos_so_2023:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/stackoverflow_2023/stack_overflow_survey_results_public.csv
-  layer: raw
+  load_args:
+    encoding: 'utf-8-sig'
 
 # --- JetBrains 2025 ---
 datos_crudos_jb_2025_external:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external.csv
-  layer: raw
+  load_args:
+    encoding: 'utf-8-sig'
 
 datos_crudos_jb_2025_narrow:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external_narrow.csv.zip
-  layer: raw
   load_args:
-    compression: zip # <--Añadido argumento de compresión
+    compression: zip
+    encoding: 'utf-8-sig'
