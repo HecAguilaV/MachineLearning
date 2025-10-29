@@ -1,0 +1,20 @@
+# conf/base/catalog.yml
+
+# --- Stack Overflow 2023 ---
+datos_crudos_so_2023:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/stackoverflow_2023/stack_overflow_survey_results_public.csv
+  layer: raw
+
+# --- JetBrains 2025 ---
+datos_crudos_jb_2025_external:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external.csv
+  layer: raw
+
+datos_crudos_jb_2025_narrow:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external_narrow.csv.zip
+  layer: raw
+  load_args:
+    compression: zip # <--Añadido argumento de compresión
