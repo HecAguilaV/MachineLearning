@@ -1,0 +1,5 @@
+outs:
+- md5: 3022d8b5616a2674ace62332b03ea6db
+  size: 6504229
+  hash: md5
+  path: datos_para_modelado.parquet

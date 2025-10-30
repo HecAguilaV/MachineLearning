@@ -14,6 +14,9 @@ data/**
 # except their sub-folders
 !data/**/
 
+# Permitir archivos .dvc en model_input
+!data/05_model_input/*.dvc
+
 # also keep all .gitkeep files
 !.gitkeep
 
