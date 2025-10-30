@@ -8,7 +8,7 @@ requires-python = ">=3.11"
 name = "ml_analisis_ecosistema_dev"
 readme = "README.md"
 dynamic = [ "version",]
-dependencies = [ "ipython>=8.10", "jupyterlab>=3.0", "notebook", "kedro[jupyter]>=0.19.0, <1.0", "kedro-datasets[pandas-csvdataset, pandas-exceldataset, pandas-parquetdataset, plotly-plotlydataset, plotly-jsondataset, matplotlib-matplotlibwriter]>=3.0", "kedro-viz>=6.7.0", "scikit-learn~=1.5.1", "seaborn~=0.12.1",]
+dependencies = [ "ipython>=8.10", "jupyterlab>=3.0", "notebook", "kedro[jupyter]~=1.0.0", "kedro-datasets[pandas-csvdataset, pandas-exceldataset, pandas-parquetdataset, plotly-plotlydataset, plotly-jsondataset, matplotlib-matplotlibwriter]>=3.0", "kedro-viz>=6.7.0", "scikit-learn~=1.5.1", "seaborn~=0.12.1",]
 
 [project.scripts]
 ml-analisis-ecosistema-dev = "ml_analisis_ecosistema_dev.__main__:main"
@@ -17,7 +17,7 @@ ml-analisis-ecosistema-dev = "ml_analisis_ecosistema_dev.__main__:main"
 [tool.kedro]
 package_name = "ml_analisis_ecosistema_dev"
 project_name = "ML_Analisis_Ecosistema_Dev"
-kedro_init_version = "0.19.15"
+kedro_init_version = "1.0.0"
 tools = "['Data Structure']"
 example_pipeline = "True"
 source_dir = "src"

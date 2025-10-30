@@ -66,9 +66,68 @@ El trabajo se divide en las siguientes fases. **Actualmente estamos en la Fase 1
 
 ### Opción A: Entorno Local (Recomendado para desarrollo)
 
+### Acceso público a los datos versionados (DVC)
+
+Los datos versionados del proyecto están almacenados en Google Cloud Storage (GCS) y son de acceso público para toda la comunidad, bajo la licencia especificada en este repositorio.
+
+👉 [Acceso público a los datos versionados en GCS](https://console.cloud.google.com/storage/browser/ml-ecosistema-dev-2025)
+
+Puedes descargar los archivos manualmente desde el enlace o, si tienes configurado DVC, usar `dvc pull` para restaurar los datos en las rutas originales del proyecto.
+
+> **Nota:** DVC almacena los datos en GCS usando hashes, pero al ejecutar `dvc pull` se restauran con sus nombres y rutas originales.
+
+**Licencia:** Consulta el archivo [LICENSE](./LICENSE) para conocer los términos de uso y atribución obligatoria.
+
+#### Pasos rápidos:
 1.  **Prerrequisitos:** Git, Python 3.10+.
 2.  **Clonar:** `git clone <URL_DEL_REPOSITORIO_GIT> && cd ML-Analisis-Ecosistema-Dev`
 3.  **Entorno Virtual:** `py -m venv .venv && .\.venv\Scripts\activate` (en Windows)
+
+---
+
+## 5. Automatización del flujo de publicación de datos
+
+Puedes automatizar la publicación y versionado de datos con un script bash como el siguiente (ejemplo para sistemas Unix):
+
+```bash
+#!/bin/bash
+source .venv/bin/activate
+# Versiona todos los archivos nuevos en la carpeta de datos crudos
+dvc add data/01_raw/
+git add .
+git commit -m "Nuevos datos versionados en data/01_raw/"
+dvc push
+# (Opcional) Asegura acceso público a todo el bucket:
+# gsutil iam ch allUsers:objectViewer gs://ml-ecosistema-dev-2025
+git push
+```
+
+
+En Windows, puedes usar el script ya incluido en el repositorio. Ejecútalo desde la raíz del proyecto:
+
+```bat
+publish_data.bat
+```
+Este script automatiza el versionado y publicación de todos los archivos en la carpeta `data/01_raw/` usando DVC y Git.
+
+Si deseas versionar un archivo específico, referencia su nombre directamente. Ejemplo en bash:
+
+```bash
+dvc add data/01_raw/mi_archivo.csv
+```
+O en Windows (CMD):
+
+```bat
+dvc add data\01_raw\mi_archivo.csv
+```
+
+---
+
+## 6. Orquestación y DAGs (Airflow)
+
+El proyecto utiliza Apache Airflow para orquestar y automatizar la ejecución de los pipelines de datos y modelos. Los DAGs (Directed Acyclic Graphs) definen el flujo de tareas y su dependencia, permitiendo programar y monitorizar todo el proceso de extremo a extremo.
+
+Para más detalles sobre los DAGs y la integración con Airflow, revisa la documentación en la carpeta `docs/` y los archivos de configuración en `src/`.
 4.  **Instalar Dependencias:** `pip install -r requirements.txt`
 5.  **Instalar Proyecto:** `pip install -e .`
 6.  **Verificar:** `kedro run`
