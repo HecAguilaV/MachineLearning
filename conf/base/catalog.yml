@@ -53,6 +53,51 @@ datos_features_seleccionados_so_2023:
   type: kedro.io.MemoryDataset
 
 # --- Dataset Final para Modelado ---
-datos_para_modelado_so_2023:
+datos_para_modelado:
   type: pandas.ParquetDataset
   filepath: data/05_model_input/datos_para_modelado.parquet
+
+# --- Datasets para Regresión ---
+X_train:
+  type: kedro.io.MemoryDataset
+
+X_test:
+  type: kedro.io.MemoryDataset
+
+y_train:
+  type: kedro.io.MemoryDataset
+
+y_test:
+  type: kedro.io.MemoryDataset
+
+regresion_model:
+  type: kedro_datasets.pickle.PickleDataset
+  filepath: data/06_models/regresion_model.pkl
+
+metrics:
+  type: kedro_datasets.json.JSONDataset
+  filepath: data/08_reporting/metrics.json
+
+# --- Datasets para Clasificación ---
+data_with_target:
+  type: kedro.io.MemoryDataset
+
+X_train_clf:
+  type: kedro.io.MemoryDataset
+
+X_test_clf:
+  type: kedro.io.MemoryDataset
+
+y_train_clf:
+  type: kedro.io.MemoryDataset
+
+y_test_clf:
+  type: kedro.io.MemoryDataset
+
+clasificacion_model:
+  type: kedro_datasets.pickle.PickleDataset
+  filepath: data/06_models/clasificacion_model.pkl
+
+metrics_clf:
+  type: kedro_datasets.json.JSONDataset
+  filepath: data/08_reporting/metrics_clf.json

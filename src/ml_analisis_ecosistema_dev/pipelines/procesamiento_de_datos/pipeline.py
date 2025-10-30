@@ -1,5 +1,5 @@
 """
-Pipeline de procesamiento de datos.
+Pipeline de procesamiento de datos robusto y controlado por una "allowlist".
 """
 
 from kedro.pipeline import Pipeline, node
@@ -8,9 +8,7 @@ from .nodes import (
     analizar_y_limpiar_nulos, 
     eliminar_filas_sin_salario,
     filtrar_outliers_salario,
-    codificar_variables_categoricas,
-    seleccionar_caracteristicas,
-    escalar_variables_numericas
+    preprocesamiento_final_con_allowlist # Importar la nueva función final
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -50,32 +48,23 @@ def create_pipeline(**kwargs) -> Pipeline:
         ),
         node(
             func=eliminar_filas_sin_salario,
-            inputs="datos_primarios_so_2023",
+            inputs={"df_so": "datos_primarios_so_2023", "target_col": "params:preprocessing_params.target_col"},
             outputs="datos_con_salario_so_2023",
             name="eliminar_filas_sin_salario_so",
         ),
         node(
             func=filtrar_outliers_salario,
-            inputs="datos_con_salario_so_2023",
+            inputs={"df_so": "datos_con_salario_so_2023", "target_col": "params:preprocessing_params.target_col"},
             outputs="datos_sin_outliers_so_2023",
             name="filtrar_outliers_salario_so",
         ),
         node(
-            func=codificar_variables_categoricas,
-            inputs="datos_sin_outliers_so_2023",
-            outputs="datos_codificados_so_2023",
-            name="codificar_categoricas_so",
-        ),
-        node(
-            func=seleccionar_caracteristicas,
-            inputs="datos_codificados_so_2023",
-            outputs="datos_features_seleccionados_so_2023",
-            name="seleccionar_caracteristicas_so",
-        ),
-        node(
-            func=escalar_variables_numericas,
-            inputs="datos_features_seleccionados_so_2023",
-            outputs="datos_para_modelado_so_2023",
-            name="escalar_numericas_so",
+            func=preprocesamiento_final_con_allowlist,
+            inputs={
+                "df": "datos_sin_outliers_so_2023",
+                "params": "params:preprocessing_params"
+            },
+            outputs="datos_para_modelado",
+            name="preprocesamiento_final_node",
         ),
     ])

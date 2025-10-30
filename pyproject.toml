@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 name = "ml_analisis_ecosistema_dev"
 readme = "README.md"
 dynamic = [ "version",]
-dependencies = [ "ipython>=8.10", "jupyterlab>=3.0", "notebook", "kedro[jupyter]~=1.0.0", "kedro-datasets[pandas-csvdataset, pandas-exceldataset, pandas-parquetdataset, plotly-plotlydataset, plotly-jsondataset, matplotlib-matplotlibwriter]>=3.0", "kedro-viz>=6.7.0", "scikit-learn~=1.5.1", "seaborn~=0.12.1",]
+dependencies = [ "ipython>=8.10", "jupyterlab>=3.0", "notebook", "kedro[jupyter]~=1.0.0", "kedro-datasets[pandas-parquetdataset, pickle-pickledataset, json-jsondataset]>=3.0", "kedro-viz>=6.7.0", "scikit-learn~=1.5.1", "seaborn~=0.12.1",]
 
 [project.scripts]
 ml-analisis-ecosistema-dev = "ml_analisis_ecosistema_dev.__main__:main"
