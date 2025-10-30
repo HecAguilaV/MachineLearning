@@ -2,21 +2,58 @@
 
 # --- Stack Overflow 2023 ---
 datos_crudos_so_2023:
-  type: pandas.CSVDataset
+  type: kedro_datasets.pandas.csv_dataset
   filepath: data/01_raw/stackoverflow_2023/stack_overflow_survey_results_public.csv
   load_args:
     encoding: 'utf-8-sig'
 
 # --- JetBrains 2025 ---
 datos_crudos_jb_2025_external:
-  type: pandas.CSVDataset
+  type: kedro_datasets.pandas.csv_dataset
   filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external.csv
   load_args:
     encoding: 'utf-8-sig'
 
 datos_crudos_jb_2025_narrow:
-  type: pandas.CSVDataset
+  type: kedro_datasets.pandas.csv_dataset
   filepath: data/01_raw/jetbrains_2025/developer_ecosystem_2025_external_narrow.csv.zip
   load_args:
     compression: zip
     encoding: 'utf-8-sig'
+
+# --- Datasets Intermedios (En Memoria) ---
+datos_intermedios_so_2023:
+  type: kedro.io.memory_dataset
+
+datos_intermedios_jb_external:
+  type: kedro.io.memory_dataset
+
+datos_intermedios_jb_narrow:
+  type: kedro.io.memory_dataset
+
+datos_primarios_so_2023:
+  type: kedro.io.memory_dataset
+
+datos_primarios_jb_external:
+  type: kedro.io.memory_dataset
+
+datos_primarios_jb_narrow:
+  type: kedro.io.memory_dataset
+
+datos_con_salario_so_2023:
+  type: kedro.io.memory_dataset
+
+datos_sin_outliers_so_2023:
+  type: kedro.io.memory_dataset
+
+datos_codificados_so_2023:
+  type: kedro.io.memory_dataset
+
+datos_features_seleccionados_so_2023:
+  type: kedro.io.memory_dataset
+
+# --- Dataset Final para Modelado ---
+datos_para_modelado_so_2023:
+  type: kedro_datasets.pandas.parquet_dataset
+  filepath: data/05_model_input/datos_para_modelado.parquet
+  layer: model_input

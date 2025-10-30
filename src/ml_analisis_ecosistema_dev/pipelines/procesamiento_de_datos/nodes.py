@@ -169,3 +169,97 @@ def codificar_variables_categoricas(df_so: pd.DataFrame) -> pd.DataFrame:
     print("--- Fin de la codificación ---")
     
     return df_encoded
+
+
+def seleccionar_caracteristicas(df: pd.DataFrame, target_col: str = "ConvertedCompYearly") -> pd.DataFrame:
+    """
+    Selecciona características basadas en la correlación.
+
+    1. Elimina características altamente correlacionadas entre sí (multicolinealidad).
+    2. Elimina características con baja correlación con la variable objetivo.
+
+    Args:
+        df: DataFrame con datos codificados.
+        target_col: Nombre de la columna objetivo.
+
+    Returns:
+        DataFrame con un conjunto reducido de características.
+    """
+    print("--- Iniciando selección de características por correlación ---")
+    
+    if target_col not in df.columns:
+        print(f"ADVERTENCIA: La columna objetivo '{target_col}' no se encuentra. Omitiendo selección.")
+        return df
+
+    # Asegurarse de que solo se usan columnas numéricas
+    df_numeric = df.select_dtypes(include=['number'])
+    
+    # 1. Eliminar multicolinealidad
+    corr_matrix = df_numeric.corr().abs()
+    upper_tri = corr_matrix.where(pd.np.triu(pd.np.ones(corr_matrix.shape), k=1).astype(pd.np.bool))
+    
+    to_drop_multi = [column for column in upper_tri.columns if any(upper_tri[column] > 0.90)]
+    
+    df_reduced = df.drop(columns=to_drop_multi)
+    
+    print(f"Se eliminaron {len(to_drop_multi)} columnas por alta multicolinealidad (> 0.90).")
+
+    # 2. Eliminar características con baja correlación con el target
+    correlations_with_target = df_reduced.select_dtypes(include=['number']).corr()[target_col].abs()
+    
+    # Mantener solo las que superan el umbral, y siempre mantener el target
+    cols_to_keep = correlations_with_target[correlations_with_target >= 0.05].index.tolist()
+    if target_col not in cols_to_keep:
+        cols_to_keep.append(target_col)
+
+    # Identificar columnas no numéricas para mantenerlas siempre
+    non_numeric_cols = df.select_dtypes(exclude=['number']).columns.tolist()
+    final_cols_to_keep = list(set(cols_to_keep + non_numeric_cols))
+
+    to_drop_low_corr = [
+        col for col in df_reduced.select_dtypes(include=['number']).columns 
+        if col not in final_cols_to_keep
+    ]
+
+    df_final = df_reduced.drop(columns=to_drop_low_corr)
+
+    print(f"Se eliminaron {len(to_drop_low_corr)} columnas numéricas por baja correlación (< 0.05) con '{target_col}'.")
+    print(f"El número de columnas se redujo de {len(df.columns)} a {len(df_final.columns)}.")
+    print("--- Fin de la selección de características ---")
+
+    return df_final
+
+from sklearn.preprocessing import StandardScaler
+
+def escalar_variables_numericas(df: pd.DataFrame, target_col: str = "ConvertedCompYearly") -> pd.DataFrame:
+    """
+    Estandariza las columnas numéricas de un DataFrame usando StandardScaler,
+    excluyendo la columna objetivo.
+
+    Args:
+        df: DataFrame a escalar.
+        target_col: Nombre de la columna objetivo a excluir del escalado.
+
+    Returns:
+        DataFrame con las columnas numéricas escaladas.
+    """
+    print("--- Iniciando estandarización de variables numéricas ---")
+    
+    # Identificar columnas numéricas, excluyendo el target
+    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+    if target_col in numeric_cols:
+        numeric_cols.remove(target_col)
+
+    if not numeric_cols:
+        print("No se encontraron columnas numéricas para escalar.")
+        return df
+
+    print(f"Se escalarán {len(numeric_cols)} columnas numéricas.")
+
+    scaler = StandardScaler()
+    df_scaled = df.copy()
+    df_scaled[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    
+    print("--- Fin de la estandarización ---")
+
+    return df_scaled

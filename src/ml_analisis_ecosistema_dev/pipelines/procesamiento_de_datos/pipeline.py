@@ -8,7 +8,9 @@ from .nodes import (
     analizar_y_limpiar_nulos, 
     eliminar_filas_sin_salario,
     filtrar_outliers_salario,
-    codificar_variables_categoricas
+    codificar_variables_categoricas,
+    seleccionar_caracteristicas,
+    escalar_variables_numericas
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -63,5 +65,17 @@ def create_pipeline(**kwargs) -> Pipeline:
             inputs="datos_sin_outliers_so_2023",
             outputs="datos_codificados_so_2023",
             name="codificar_categoricas_so",
+        ),
+        node(
+            func=seleccionar_caracteristicas,
+            inputs="datos_codificados_so_2023",
+            outputs="datos_features_seleccionados_so_2023",
+            name="seleccionar_caracteristicas_so",
+        ),
+        node(
+            func=escalar_variables_numericas,
+            inputs="datos_features_seleccionados_so_2023",
+            outputs="datos_para_modelado_so_2023",
+            name="escalar_numericas_so",
         ),
     ])
