@@ -101,6 +101,11 @@ def preprocesamiento_final_con_allowlist(df: pd.DataFrame, params: Dict[str, Any
         features_df[numeric_features] = scaler.fit_transform(features_df[numeric_features])
     
     final_df = pd.concat([features_df, y], axis=1)
+
+    # 7. Sanitizar nombres de columnas para compatibilidad con LightGBM/XGBoost
+    logger.info("Sanitizando nombres de columnas...")
+    final_df.columns = final_df.columns.str.replace(r'[^A-Za-z0-9_]+', '_', regex=True)
+
     logger.info(f"--- Preprocesamiento Final Completado. Dimensiones: {final_df.shape} ---")
     
     return final_df

@@ -84,3 +84,23 @@ classification_pipeline:
       param_grid:
         model__n_estimators: [100]
         model__max_depth: [10, 20]
+
+    SVC:
+      model_name: "SVC"
+      param_grid:
+        model__C: [0.1, 1.0]
+        model__gamma: ['scale', 'auto']
+
+    XGBClassifier:
+      model_name: "XGBClassifier"
+      param_grid:
+        model__n_estimators: [100]
+        model__learning_rate: [0.01, 0.1]
+        model__max_depth: [3, 5]
+
+    LGBMClassifier:
+      model_name: "LGBMClassifier"
+      param_grid:
+        model__n_estimators: [100]
+        model__learning_rate: [0.01, 0.1]
+        model__num_leaves: [31, 50]

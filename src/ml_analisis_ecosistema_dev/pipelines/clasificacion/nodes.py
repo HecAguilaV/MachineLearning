@@ -6,8 +6,6 @@ import logging
 import pandas as pd
 from typing import Dict, Any
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
@@ -57,7 +55,7 @@ def _get_model_instance(model_name: str, params: Dict[str, Any]):
 def train_classifier_with_grid_search(X_train: pd.DataFrame, y_train: pd.Series, model_name: str, params: Dict[str, Any]) -> Any:
     """Entrena un clasificador usando un pipeline con SMOTE y GridSearchCV."""
     model = _get_model_instance(model_name, params)
-    param_grid = {f'model__{k}': v for k, v in params["models"][model_name]["param_grid"].items()}
+    param_grid = params["models"][model_name]["param_grid"]
 
     pipeline = ImbPipeline([
         ('smote', SMOTE(random_state=params.get("random_state"))),
@@ -71,8 +69,9 @@ def train_classifier_with_grid_search(X_train: pd.DataFrame, y_train: pd.Series,
         param_grid=param_grid,
         cv=cv,
         scoring=params.get("scoring", "f1"),
-        n_jobs=-1,
-        verbose=1
+        n_jobs=-1, # Revertido a -1 para usar todos los núcleos
+        verbose=1,
+        error_score='raise' # Añadido para depuración
     )
     
     logger.info(f"Iniciando GridSearchCV para el clasificador {model_name}...")
@@ -82,7 +81,10 @@ def train_classifier_with_grid_search(X_train: pd.DataFrame, y_train: pd.Series,
     return grid_search.best_estimator_
 
 def report_and_select_best_classifier(X_test: pd.DataFrame, y_test: pd.Series, **models) -> Dict[str, Any]:
-    """Evalúa, reporta y selecciona el mejor modelo de clasificación."""
+    """
+    Evalúa, reporta y selecciona el mejor modelo de clasificación.
+    Guarda las matrices de confusión numéricas.
+    """
     metrics_report = {}
     best_model = None
     best_f1 = -1
@@ -103,23 +105,12 @@ def report_and_select_best_classifier(X_test: pd.DataFrame, y_test: pd.Series, *
         }
         metrics_report[model_name] = metrics
         cm = confusion_matrix(y_test, y_pred)
-        confusion_matrices[model_name] = cm
+        confusion_matrices[model_name] = cm.tolist() # Guardar como lista para serialización
 
         logger.info(f"Modelo: {model_name}")
         for metric, value in metrics.items():
             logger.info(f"  - {metric.replace('_', ' ').title()}: {value:.4f}")
         
-        # Visualización de la Matriz de Confusión
-        plt.figure(figsize=(6, 4))
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-        plt.title(f'Matriz de Confusión - {model_name}')
-        plt.ylabel('Etiqueta Real')
-        plt.xlabel('Etiqueta Predicha')
-        # Guardar la figura en un diccionario para que Kedro la pueda versionar
-        # Esta es una forma de manejar artefactos visuales
-        # La clave será el nombre del artefacto en el catalog.yml
-        confusion_matrices[f"{model_name}_confusion_matrix_plot"] = plt
-
         if metrics["f1_score"] > best_f1:
             best_f1 = metrics["f1_score"]
             best_model = model

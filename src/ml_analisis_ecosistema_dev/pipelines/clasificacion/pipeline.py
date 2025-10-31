@@ -17,7 +17,7 @@ def create_pipeline(**kwargs) -> Pipeline:
     
     model_names = [
         "LogisticRegression",
-        "SVC",
+        # "SVC", # Eliminado permanentemente por alto costo computacional
         "RandomForestClassifier",
         "XGBClassifier",
         "LGBMClassifier",
