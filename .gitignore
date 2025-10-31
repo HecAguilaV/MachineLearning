@@ -17,6 +17,12 @@ data/**
 # Permitir archivos .dvc en model_input
 !data/05_model_input/*.dvc
 
+# Permitir archivos .dvc en modelos
+!data/06_models/*.dvc
+
+# Permitir archivos .dvc en reportes
+!data/08_reporting/*.dvc
+
 # also keep all .gitkeep files
 !.gitkeep
 

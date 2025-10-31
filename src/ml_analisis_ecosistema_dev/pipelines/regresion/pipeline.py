@@ -64,8 +64,8 @@ def create_pipeline(**kwargs) -> Pipeline:
         func=report_and_select_best_model,
         inputs=report_inputs,
         outputs={
-            "best_regression_model": "best_regression_model",
-            "regression_metrics_report": "regression_metrics_report",
+            "best_regression_model": "regresion_model", # Coincide con catalog.yml
+            "regression_metrics_report": "metrics", # Coincide con catalog.yml
         },
         name="report_and_select_best_model_node",
     )

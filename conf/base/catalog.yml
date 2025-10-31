@@ -101,3 +101,7 @@ clasificacion_model:
 metrics_clf:
   type: kedro_datasets.json.JSONDataset
   filepath: data/08_reporting/metrics_clf.json
+
+classification_confusion_matrices:
+  type: kedro_datasets.json.JSONDataset
+  filepath: data/08_reporting/classification_confusion_matrices.json

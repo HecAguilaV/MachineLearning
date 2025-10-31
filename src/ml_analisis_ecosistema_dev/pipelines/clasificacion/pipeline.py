@@ -67,9 +67,9 @@ def create_pipeline(**kwargs) -> Pipeline:
         func=report_and_select_best_classifier,
         inputs=report_inputs,
         outputs={
-            "best_classification_model": "best_classification_model",
-            "classification_metrics_report": "classification_metrics_report",
-            "classification_confusion_matrices": "classification_confusion_matrices",
+            "best_classification_model": "clasificacion_model", # Coincide con catalog.yml
+            "classification_metrics_report": "metrics_clf", # Coincide con catalog.yml
+            "classification_confusion_matrices": "classification_confusion_matrices", # Coincide con catalog.yml
         },
         name="report_and_select_best_classifier_node",
     )
