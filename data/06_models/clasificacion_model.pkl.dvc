@@ -1,0 +1,5 @@
+outs:
+- md5: dcae914e195c82857c82f2c14cbacd05
+  size: 27577242
+  hash: md5
+  path: clasificacion_model.pkl

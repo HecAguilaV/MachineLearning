@@ -1,0 +1,5 @@
+outs:
+- md5: a84d277d31ad3b44412b5faa0f298ad7
+  size: 901
+  hash: md5
+  path: metrics_clf.json
