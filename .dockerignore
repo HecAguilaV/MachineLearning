@@ -1,0 +1,23 @@
+# Ignora carpetas y archivos pesados o innecesarios para la imagen Docker
+.dvc/
+.dvcignore
+.venv/
+.viz/
+data/
+notebooks/
+logs/
+.git/
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.tmp
+*.bak
+*.swp
+*.egg-info/
+.env
+.env.*
