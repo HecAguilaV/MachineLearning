@@ -9,20 +9,12 @@ conf/local/**
 conf/**/*credentials*
 
 # ignore everything in the following folders
-data/**
 logs/
 
-# except their sub-folders
-!data/**/
-
-# Permitir archivos .dvc en model_input
-!data/05_model_input/*.dvc
-
-# Permitir archivos .dvc en modelos
-!data/06_models/*.dvc
-
-# Permitir archivos .dvc en reportes
-!data/08_reporting/*.dvc
+# Ignore the CONTENTS of the data folder, but allow DVC and gitkeep files
+data/
+!data/**/*.dvc
+!data/**/.gitkeep
 
 # also keep all .gitkeep files
 !.gitkeep
